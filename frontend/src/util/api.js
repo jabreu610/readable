@@ -10,3 +10,8 @@ export function fetchAllPosts() {
     return fetch(`${baseUrl}/posts`, { headers: { Authorization } })
         .then((res) => res.json());
 }
+
+export function fetchPostsByCategory(category) {
+    return fetch(`${baseUrl}/${category}/posts`, { headers: { Authorization } })
+        .then((res) => res.json());
+}
