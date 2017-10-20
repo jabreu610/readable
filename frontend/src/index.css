@@ -3,3 +3,10 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+.new-post-btn {
+  float: right;
+  margin-top: 15px;
+}
+.sort-select {
+  margin-top: 15px;
+}

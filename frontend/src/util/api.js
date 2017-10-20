@@ -5,3 +5,8 @@ export function fetchCategories() {
     return fetch(`${baseUrl}/categories`, { headers: { Authorization } })
         .then((res) => res.json());
 }
+
+export function fetchAllPosts() {
+    return fetch(`${baseUrl}/posts`, { headers: { Authorization } })
+        .then((res) => res.json());
+}
