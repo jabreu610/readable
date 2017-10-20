@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import reducer from './reducers';
 import { Provider } from 'react-redux';
@@ -25,7 +25,7 @@ const store = createStore(
 ReactDOM.render(
     <Provider store={store}>
         <Router>
-            <Route path="/" component={App} />
+            <App />
         </Router>
     </Provider>,
      document.getElementById('root'));
