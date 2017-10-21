@@ -22,7 +22,6 @@ import {
     FormControl,
     Panel,
 } from "react-bootstrap";
-import moment from "moment";
 
 class Main extends Component {
     state = {
@@ -118,7 +117,10 @@ class Main extends Component {
                             Downvote
                         </Button>
                         <div className="pull-right">
-                            <Button bsSize="xsmall">Edit</Button>{" "}
+                            <LinkContainer to={`/post/form/${post.id}`}>
+                                <Button bsSize="xsmall">Edit</Button>
+                            </LinkContainer>
+                            {" "}
                             <Button
                                 bsSize="xsmall"
                                 bsStyle="danger"
@@ -173,7 +175,7 @@ class Main extends Component {
                                 </FormControl>
                             </Col>
                             <Col xs={2}>
-                                <LinkContainer to="/post/new">
+                                <LinkContainer to="/post/form/new">
                                     <Button
                                         className="new-post-btn"
                                         bsStyle="primary">

@@ -86,8 +86,9 @@ export function postNewPost(body) {
 }
 
 export function editPost(body) {
-    const postId = body["postId"];
-    return fetch(`${baseUrl}/posts/${postId}`, {
+    const { id } = body;
+    delete body["id"];
+    return fetch(`${baseUrl}/posts/${id}`, {
         headers: { Authorization, "Content-Type": "application/json" },
         method: "PUT",
         body: JSON.stringify(body),

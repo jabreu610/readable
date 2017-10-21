@@ -98,9 +98,9 @@ export const deletePost = post => dispatch => {
 );
 }
 
-export const editPost = comment => dispatch => {
+export const editPost = post => dispatch => {
     dispatch({ type: EDIT_POST });
-    Api.editPost(comment).then(() =>
+    Api.editPost(post).then(() =>
     dispatch(fetchPosts())
 );
 }
