@@ -5,6 +5,7 @@ import {
   fetchPostComments,
   postComment,
   postVoteForComment,
+  postVoteForPost,
 } from "../actions";
 import {
   Grid,
@@ -15,6 +16,7 @@ import {
   FormControl,
   FormGroup,
   HelpBlock,
+  Well,
 } from "react-bootstrap";
 import moment from "moment";
 import uuid from 'uuid';
@@ -52,9 +54,13 @@ class PostDetails extends Component {
             }
         })
     }
-    handleVote = (commentId, e) => {
+    handleCommentVote = (commentId, e) => {
         const option = e.target.value;
         this.props.postVoteForComment({option, parentId: this.state.selected_post_id, commentId})
+    }
+    handlePostVote = (e) => {
+        const option = e.target.value;
+        this.props.postVoteForPost({option, postId: this.state.selected_post_id})
     }
     clearForm = () => {
         this.setState({
@@ -140,7 +146,7 @@ class PostDetails extends Component {
                     bsSize="xsmall"
                     value="upVote"
                     bsStyle="success"
-                    onClick={this.handleVote.bind(this, comment.id)}
+                    onClick={this.handleCommentVote.bind(this, comment.id)}
                   >
                     Upvote
                   </Button>{" "}
@@ -148,7 +154,7 @@ class PostDetails extends Component {
                     bsSize="xsmall"
                     value="downVote"
                     bsStyle="warning"
-                    onClick={this.handleVote.bind(this, comment.id)}
+                    onClick={this.handleCommentVote.bind(this, comment.id)}
                   >
                     Downvote
                   </Button>
@@ -185,6 +191,26 @@ class PostDetails extends Component {
             <Row>
               <Col xs={12}>
                 <h4>{`by ${details.author} - ${moment(details.timestamp).format("MMM DD, YYYY hh:mma")}`}</h4>
+                <div className="vote-controls">
+                    {`Vote Score: ${details.voteScore} `}
+                    {" - "}
+                    <Button
+                        bsSize="xsmall"
+                        value="upVote"
+                        bsStyle="success"
+                        onClick={this.handlePostVote}
+                    >
+                        Upvote
+                    </Button>{" "}
+                    <Button
+                        bsSize="xsmall"
+                        value="downVote"
+                        bsStyle="warning"
+                        onClick={this.handlePostVote}
+                    >
+                        Downvote
+                    </Button>
+                </div>
                 <p>{details.body}</p>
                 <hr />
                 {comments.length > 0 ? commentsPanels : <h4>
@@ -225,6 +251,7 @@ const mapDispatchToProps = dispatch => {
     fetchPostComments: id => dispatch(fetchPostComments(id)),
     postComment: comment => dispatch(postComment(comment)),
     postVoteForComment: vote => dispatch(postVoteForComment(vote)),
+    postVoteForPost: vote => dispatch(postVoteForPost(vote)),
   };
 };
 

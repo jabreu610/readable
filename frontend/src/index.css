@@ -17,3 +17,6 @@ body {
 .comment-controls {
   float: right;
 }
+.vote-controls {
+  margin: 0 0 10px 0;
+}

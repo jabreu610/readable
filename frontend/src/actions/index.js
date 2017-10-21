@@ -5,11 +5,19 @@ export const SET_POSTS = '[Posts] Set posts from server';
 export const FETCH_POSTS = "[Posts] Fetch posts from server";
 export const FETCH_POSTS_BY_CATEGORY = "[Posts] Fetch posts by category from server";
 export const FETCH_POST_DETAILS = '[Post Details] Fetch post details from server';
+export const FETCH_COMMENT_DETAILS = '[Post Details] Fetch comment details from server';
 export const SET_POST_DETAILS = '[Post Details] Set post details from server';
+export const SET_COMMENT_DETAILS = '[Post Details] Set comment details from server';
 export const FETCH_POST_COMMENTS = '[Post Details] Fetch post comments from server';
 export const SET_POST_COMMENTS = '[Post Details] Set post comments from server';
 export const POST_NEW_COMMENT = '[Post Details] Post comment to server';
+export const DELETE_COMMENT = '[Post Details] Remove comment from server';
+export const EDIT_COMMENT = '[Post Details] Edit comment on server';
+export const POST_NEW_POST = '[Post Details] Post new post to server';
+export const DELETE_POST = '[Posts] Remove post from server';
+export const EDIT_POST = '[Posts] Edit post on server';
 export const VOTE_FOR_COMMENT = '[Post Details] Post vote on comment to server';
+export const VOTE_FOR_POST = '[Post Details] Post vote on post to server';
 
 export const setCategories = categories => ({
     type: SET_CATEGORIES,
@@ -41,9 +49,19 @@ export const setPostDetails = details => ({
     payload: details,
 });
 
+export const setCommentDetails = details => ({
+    type: SET_COMMENT_DETAILS,
+    payload: details,
+});
+
 export const fetchPostDetails = id => dispatch => {
     dispatch({ type: FETCH_POST_DETAILS });
     Api.fetchPostsDetails(id).then(details => dispatch(setPostDetails(details)));
+}
+
+export const fetchCommentDetails = id => dispatch => {
+    dispatch({ type: FETCH_COMMENT_DETAILS });
+    Api.fetchCommentDetails(id).then(details => dispatch(setCommentDetails(details)));
 }
 
 export const setPostComments = comments => ({
@@ -56,10 +74,47 @@ export const fetchPostComments = id => dispatch => {
     Api.fetchCommentsForPost(id).then(comments => dispatch(setPostComments(comments)));
 }
 
+export const postPost = post => dispatch => {
+    dispatch({ type: POST_NEW_POST});
+    Api.postNewPost(post).then(() =>
+      dispatch(fetchPosts())
+    );
+}
+
+export const deletePost = post => dispatch => {
+    dispatch({ type: DELETE_POST });
+    Api.deletePost(post.id).then(() =>
+      dispatch(fetchPosts())
+    );
+}
+
+export const editPost = comment => dispatch => {
+    dispatch({ type: EDIT_POST });
+    Api.editPost(comment).then(() =>
+      dispatch(fetchPost())
+    );
+}
+
 export const postComment = comment => dispatch => {
     dispatch({ type: POST_NEW_COMMENT });
     const post_id = comment.parentId;
     Api.postNewComment(comment).then(() =>
+      dispatch(fetchPostComments(post_id))
+    );
+}
+
+export const deleteComment = comment => dispatch => {
+    dispatch({ type: DELETE_COMMENT });
+    const post_id = comment.parentId;
+    Api.deleteComment(comment.id).then(() =>
+      dispatch(fetchPostComments(post_id))
+    );
+}
+
+export const editComment = comment => dispatch => {
+    dispatch({ type: EDIT_COMMENT });
+    const post_id = comment.parentId;
+    Api.editComment(comment).then(() =>
       dispatch(fetchPostComments(post_id))
     );
 }
@@ -69,5 +124,14 @@ export const postVoteForComment = vote => dispatch => {
     const post_id = vote.parentId;
     Api.voteForComment(vote).then(() =>
       dispatch(fetchPostComments(post_id))
+    );
+}
+
+
+export const postVoteForPost = vote => dispatch => {
+    dispatch({ type: VOTE_FOR_POST });
+    const post_id = vote.postId;
+    Api.voteForPost(vote).then(() =>
+      dispatch(fetchPostDetails(post_id))
     );
 }

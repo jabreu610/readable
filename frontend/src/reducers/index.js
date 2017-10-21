@@ -14,6 +14,15 @@ const initialState = {
             deleted: false,
         },
         comments: [],
+    },
+    comment_details: {
+        id: null,
+        timestamp: null,
+        body: '',
+        author: '',
+        parentId: '',
+        voteScore: 0,
+        deleted: false,
     }
 }
 
@@ -36,6 +45,11 @@ function reducer (state = initialState, action) {
                     ...state.post_details,
                     details: action.payload,
                 },
+            }
+        case actions.SET_COMMENT_DETAILS:
+            return {
+                ...state,
+                comment_details: action.payload,
             }
         case actions.SET_POST_COMMENTS:
             return {
