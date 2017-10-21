@@ -9,6 +9,7 @@ export const SET_POST_DETAILS = '[Post Details] Set post details from server';
 export const FETCH_POST_COMMENTS = '[Post Details] Fetch post comments from server';
 export const SET_POST_COMMENTS = '[Post Details] Set post comments from server';
 export const POST_NEW_COMMENT = '[Post Details] Post comment to server';
+export const VOTE_FOR_COMMENT = '[Post Details] Post vote on comment to server';
 
 export const setCategories = categories => ({
     type: SET_CATEGORIES,
@@ -59,6 +60,14 @@ export const postComment = comment => dispatch => {
     dispatch({ type: POST_NEW_COMMENT });
     const post_id = comment.parentId;
     Api.postNewComment(comment).then(() =>
+      dispatch(fetchPostComments(post_id))
+    );
+}
+
+export const postVoteForComment = vote => dispatch => {
+    dispatch({ type: VOTE_FOR_COMMENT });
+    const post_id = vote.parentId;
+    Api.voteForComment(vote).then(() =>
       dispatch(fetchPostComments(post_id))
     );
 }

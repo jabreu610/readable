@@ -27,9 +27,22 @@ export function fetchCommentsForPost(id) {
 }
 
 export function postNewComment(body) {
-    console.log(body);
     return fetch(
         `${baseUrl}/comments`,
+        { 
+            headers: { Authorization, 'Content-Type': "application/json" }, 
+            method: "POST", 
+            body: JSON.stringify(body) 
+        })
+        .then(res => res.json());
+}
+    
+export function voteForComment(body) {
+    const commentId = body['commentId'];
+    delete body['parentId'];
+    delete body['commentId']
+    return fetch(
+        `${baseUrl}/comments/${commentId}`,
         { 
             headers: { Authorization, 'Content-Type': "application/json" }, 
             method: "POST", 

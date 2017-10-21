@@ -4,6 +4,7 @@ import {
   fetchPostDetails,
   fetchPostComments,
   postComment,
+  postVoteForComment,
 } from "../actions";
 import {
   Grid,
@@ -50,6 +51,10 @@ class PostDetails extends Component {
                 }
             }
         })
+    }
+    handleVote = (commentId, e) => {
+        const option = e.target.value;
+        this.props.postVoteForComment({option, parentId: this.state.selected_post_id, commentId})
     }
     clearForm = () => {
         this.setState({
@@ -120,25 +125,46 @@ class PostDetails extends Component {
         const { new_comment_form } = this.state;
         const { name, comment } = new_comment_form;
         const commentsPanels = comments
-            .sort((a, b) => b.voteScore - a.voteScore)
-            .map(comment => (
-                <Panel
-                    key={comment.id} 
-                    header={`${comment.author} commented on ${moment(comment.timestamp).format("MMM DD, YYYY hh:mma")}`}
-                    footer={
-                        <div>
-                            {`Vote Score: ${comment.voteScore}`}
-                            <div className="pull-right">
-                                <Button bsSize="xsmall">Edit</Button>
-                                {' '}
-                                <Button bsSize="xsmall" bsStyle="danger">Delete</Button>
-                            </div>
-                            <div className="clearfix"></div>
-                        </div>
-                    }>
-                    {comment.body}
-                </Panel>
-            ));
+          .sort((a, b) => b.voteScore - a.voteScore)
+          .map(comment => (
+            <Panel
+              key={comment.id}
+              header={`${comment.author} commented on ${moment(
+                comment.timestamp
+              ).format("MMM DD, YYYY hh:mma")}`}
+              footer={
+                <div>
+                  {`Vote Score: ${comment.voteScore} `}
+                  {" - "}
+                  <Button
+                    bsSize="xsmall"
+                    value="upVote"
+                    bsStyle="success"
+                    onClick={this.handleVote.bind(this, comment.id)}
+                  >
+                    Upvote
+                  </Button>{" "}
+                  <Button
+                    bsSize="xsmall"
+                    value="downVote"
+                    bsStyle="warning"
+                    onClick={this.handleVote.bind(this, comment.id)}
+                  >
+                    Downvote
+                  </Button>
+                  <div className="pull-right">
+                    <Button bsSize="xsmall">Edit</Button>{" "}
+                    <Button bsSize="xsmall" bsStyle="danger">
+                      Delete
+                    </Button>
+                  </div>
+                  <div className="clearfix" />
+                </div>
+              }
+            >
+              {comment.body}
+            </Panel>
+          ));
         return <Grid>
             <Row>
               <Col xs={8}>
@@ -198,6 +224,7 @@ const mapDispatchToProps = dispatch => {
     fetchPostDetails: id => dispatch(fetchPostDetails(id)),
     fetchPostComments: id => dispatch(fetchPostComments(id)),
     postComment: comment => dispatch(postComment(comment)),
+    postVoteForComment: vote => dispatch(postVoteForComment(vote)),
   };
 };
 
