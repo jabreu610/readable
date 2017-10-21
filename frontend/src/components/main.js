@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchCategories, fetchPosts, fetchPostByCategory } from "../actions";
+import { 
+    fetchCategories,
+    fetchPosts, 
+    fetchPostByCategory, 
+    fetchPostDetails, 
+    fetchPostComments,
+} from "../actions";
 import { LinkContainer } from "react-router-bootstrap";
+import * as utils from '../util/utils';
 import {
   Grid,
   Row,
@@ -65,16 +72,19 @@ class Main extends Component {
     if (sort === "date") {
       sortFunction = this.sortByTimestamp;
     }
-    const postList = posts.sort((a, b) => sortFunction(a, b)).map(post => (
-      <ListGroupItem
-        key={post.id}
-        header={`${post.title} - ${moment(post.timestamp).format(
-          "MMM DD, YYYY hh:mma"
-        )}`}
-      >
-        {post.body}
-      </ListGroupItem>
-    ));
+    const postList = posts
+      .sort((a, b) => sortFunction(a, b))
+      .map(post => (
+        <LinkContainer key={post.id} to={`/post/${post.id}`}>
+          <ListGroupItem
+            header={`${post.title} - ${moment(post.timestamp).format(
+              "MMM DD, YYYY hh:mma"
+            )}`}
+          >
+            {post.body}
+          </ListGroupItem>
+        </LinkContainer>
+      ));
     return (
         <Grid>
             <Row>
@@ -83,7 +93,7 @@ class Main extends Component {
                 <ListGroup>
                 {categories.map(category => (
                     <LinkContainer key={category.name} to={`/${category.name}`}>
-                    <ListGroupItem>{category.name}</ListGroupItem>
+                    <ListGroupItem>{utils.capitalize(category.name)}</ListGroupItem>
                     </LinkContainer>
                 ))}
                 </ListGroup>
@@ -131,7 +141,9 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchCategories: () => dispatch(fetchCategories()),
     fetchPosts: () => dispatch(fetchPosts()),
-    fetchPostByCategory: category => dispatch(fetchPostByCategory(category))
+    fetchPostByCategory: category => dispatch(fetchPostByCategory(category)),
+    fetchPostDetails: id => dispatch(fetchPostDetails(id)),
+    fetchPostComments: id => dispatch(fetchPostComments(id)),
   };
 };
 
