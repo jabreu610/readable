@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
-  fetchPostDetails,
-  fetchPostComments,
-  postComment,
-  deleteComment,
-  deletePost,
-  postVoteForComment,
-  postVoteForPost,
+    fetchPostDetails,
+    fetchPostComments,
+    postComment,
+    deleteComment,
+    deletePost,
+    postVoteForComment,
+    postVoteForPost,
 } from "../actions";
 import {
-  Grid,
-  Row,
-  Col,
-  Button,
-  Panel,
-  FormControl,
-  FormGroup,
-  HelpBlock,
+    Grid,
+    Row,
+    Col,
+    Button,
+    Panel,
+    FormControl,
+    FormGroup,
+    HelpBlock,
 } from "react-bootstrap";
 import moment from "moment";
-import uuid from 'uuid';
+import uuid from "uuid";
 
 class PostDetails extends Component {
     state = {
@@ -64,7 +64,7 @@ class PostDetails extends Component {
         });
     };
     handleCommentDelete = (commentId, e) => {
-        if (window.confirm('Are you sure you want to delete this comment?')) {
+        if (window.confirm("Are you sure you want to delete this comment?")) {
             this.props.deleteComment({
                 parentId: this.state.selected_post_id,
                 commentId,
@@ -79,9 +79,9 @@ class PostDetails extends Component {
         });
     };
     handlePostDelete = e => {
-        if (window.confirm('Are you sure you want to delete this post?')) {
-            this.props.deletePost({id: this.state.selected_post_id});
-            this.props.history.push('/');
+        if (window.confirm("Are you sure you want to delete this post?")) {
+            this.props.deletePost({ id: this.state.selected_post_id });
+            this.props.history.push("/");
         }
     };
     clearForm = () => {
@@ -216,7 +216,11 @@ class PostDetails extends Component {
                     <Col xs={4}>
                         <div className="post-controls">
                             <Button>Edit</Button>{" "}
-                            <Button bsStyle="danger" onClick={this.handlePostDelete}>Delete</Button>
+                            <Button
+                                bsStyle="danger"
+                                onClick={this.handlePostDelete}>
+                                Delete
+                            </Button>
                         </div>
                     </Col>
                 </Row>
@@ -296,22 +300,22 @@ class PostDetails extends Component {
 }
 
 const mapStateToProps = ({ post_details }) => {
-  return {
-    details: post_details.details,
-    comments: post_details.comments
-  };
+    return {
+        details: post_details.details,
+        comments: post_details.comments,
+    };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    fetchPostDetails: id => dispatch(fetchPostDetails(id)),
-    fetchPostComments: id => dispatch(fetchPostComments(id)),
-    postComment: comment => dispatch(postComment(comment)),
-    deleteComment: comment => dispatch(deleteComment(comment)),
-    deletePost: postId => dispatch(deletePost(postId)),
-    postVoteForComment: vote => dispatch(postVoteForComment(vote)),
-    postVoteForPost: vote => dispatch(postVoteForPost(vote)),
-  };
+    return {
+        fetchPostDetails: id => dispatch(fetchPostDetails(id)),
+        fetchPostComments: id => dispatch(fetchPostComments(id)),
+        postComment: comment => dispatch(postComment(comment)),
+        deleteComment: comment => dispatch(deleteComment(comment)),
+        deletePost: postId => dispatch(deletePost(postId)),
+        postVoteForComment: vote => dispatch(postVoteForComment(vote)),
+        postVoteForPost: vote => dispatch(postVoteForPost(vote)),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostDetails);
