@@ -77,61 +77,82 @@ export const fetchPostComments = id => dispatch => {
 export const postPost = post => dispatch => {
     dispatch({ type: POST_NEW_POST});
     Api.postNewPost(post).then(() =>
-      dispatch(fetchPosts())
-    );
+    dispatch(fetchPosts())
+);
 }
 
-export const deletePost = id => dispatch => {
+export const deletePost = post => dispatch => {
     dispatch({ type: DELETE_POST });
-    Api.deletePost(id).then(() =>
-      dispatch(fetchPosts())
-    );
+    const {id, location, category} = post
+    Api.deletePost(id).then(() => {
+        if (location === "root") {
+            if (category) {
+                dispatch(fetchPostByCategory(category));
+            } else {
+                dispatch(fetchPosts());
+            }
+        } else {
+            dispatch(fetchPosts());
+        }
+    }
+);
 }
 
 export const editPost = comment => dispatch => {
     dispatch({ type: EDIT_POST });
     Api.editPost(comment).then(() =>
-      dispatch(fetchPosts())
-    );
+    dispatch(fetchPosts())
+);
 }
 
 export const postComment = comment => dispatch => {
     dispatch({ type: POST_NEW_COMMENT });
     const post_id = comment.parentId;
     Api.postNewComment(comment).then(() =>
-      dispatch(fetchPostComments(post_id))
-    );
+    dispatch(fetchPostComments(post_id))
+);
 }
 
 export const deleteComment = comment => dispatch => {
     dispatch({ type: DELETE_COMMENT });
     const post_id = comment.parentId;
     Api.deleteComment(comment.commentId).then(() =>
-      dispatch(fetchPostComments(post_id))
-    );
+    dispatch(fetchPostComments(post_id))
+);
 }
 
 export const editComment = comment => dispatch => {
     dispatch({ type: EDIT_COMMENT });
     const post_id = comment.parentId;
     Api.editComment(comment).then(() =>
-      dispatch(fetchPostComments(post_id))
-    );
+    dispatch(fetchPostComments(post_id))
+);
 }
 
 export const postVoteForComment = vote => dispatch => {
     dispatch({ type: VOTE_FOR_COMMENT });
     const post_id = vote.parentId;
     Api.voteForComment(vote).then(() =>
-      dispatch(fetchPostComments(post_id))
-    );
+    dispatch(fetchPostComments(post_id))
+);
 }
 
 
 export const postVoteForPost = vote => dispatch => {
     dispatch({ type: VOTE_FOR_POST });
-    const post_id = vote.postId;
-    Api.voteForPost(vote).then(() =>
-      dispatch(fetchPostDetails(post_id))
-    );
+    const { location, category, postId } = vote;
+    delete vote['location']
+    delete vote['category']
+    Api.voteForPost(vote).then(() => {
+        if (location === 'root') {
+            if (category) {
+                dispatch(fetchPostByCategory(category));
+            } else {
+                dispatch(fetchPosts());
+            }
+        } else {
+            dispatch(fetchPostDetails(postId));
+        }
+    }
+);
 }

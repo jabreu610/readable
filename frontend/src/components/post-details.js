@@ -18,7 +18,6 @@ import {
   FormControl,
   FormGroup,
   HelpBlock,
-  Well,
 } from "react-bootstrap";
 import moment from "moment";
 import uuid from 'uuid';
@@ -81,7 +80,7 @@ class PostDetails extends Component {
     };
     handlePostDelete = e => {
         if (window.confirm('Are you sure you want to delete this post?')) {
-            this.props.deletePost(this.state.selected_post_id);
+            this.props.deletePost({id: this.state.selected_post_id});
             this.props.history.push('/');
         }
     };

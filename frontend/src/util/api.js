@@ -8,12 +8,28 @@ export function fetchCategories() {
 
 export function fetchAllPosts() {
     return fetch(`${baseUrl}/posts`, { headers: { Authorization } })
-        .then((res) => res.json());
+        .then((res) => res.json()).then((data) => {
+           let promises = data.map((post) => {
+               return fetchCommentsForPost(post.id).then((comments) => {
+                    post.number_of_comments = comments.length;
+                    return post
+                })
+            });
+            return Promise.all(promises)
+        });
 }
 
 export function fetchPostsByCategory(category) {
     return fetch(`${baseUrl}/${category}/posts`, { headers: { Authorization } })
-        .then((res) => res.json());
+        .then((res) => res.json()).then((data) => {
+           let promises = data.map((post) => {
+               return fetchCommentsForPost(post.id).then((comments) => {
+                    post.number_of_comments = comments.length;
+                    return post
+                })
+            });
+            return Promise.all(promises)
+        });
 }
 
 export function fetchPostsDetails(id) {
