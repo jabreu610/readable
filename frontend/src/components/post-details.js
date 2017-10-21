@@ -9,6 +9,11 @@ import {
     postVoteForComment,
     postVoteForPost,
     clearPostDetails,
+    showCommentsEditModal,
+    hideCommentsEditModal,
+    fetchCommentDetails,
+    clearCommentDetails,
+    editComment,
 } from "../actions";
 import { LinkContainer } from "react-router-bootstrap";
 import {
@@ -20,6 +25,7 @@ import {
     FormControl,
     FormGroup,
     HelpBlock,
+    Modal,
 } from "react-bootstrap";
 import moment from "moment";
 import uuid from "uuid";
@@ -37,11 +43,29 @@ class PostDetails extends Component {
                 validation_state: null,
             },
         },
+        edit_comment_form: {
+            comment: {
+                value: "",
+                validation_state: null,
+            },
+        },
     };
     componentDidMount() {
         const { selected_post_id } = this.state;
         this.props.fetchPostDetails(selected_post_id);
         this.props.fetchPostComments(selected_post_id);
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.comment_details.id) {
+            this.setState({
+                edit_comment_form: {
+                    comment: {
+                        ...this.state.edit_comment_form.comment,
+                        value: nextProps.comment_details.body,
+                    },
+                },
+            });
+        }
     }
     componentWillUnmount() {
         this.props.clearPostDetails();
@@ -53,6 +77,19 @@ class PostDetails extends Component {
         this.setState({
             new_comment_form: {
                 ...this.state.new_comment_form,
+                [field]: {
+                    validation_state,
+                    value,
+                },
+            },
+        });
+    };
+    handleEditFormChange = e => {
+        const value = e.target.value;
+        const field = e.target.id;
+        const validation_state = null;
+        this.setState({
+            edit_comment_form: {
                 [field]: {
                     validation_state,
                     value,
@@ -102,6 +139,29 @@ class PostDetails extends Component {
                 },
             },
         });
+    };
+    handleCommentEdit = e => {
+        const { comment } = this.state.edit_comment_form;
+        if (comment.value === "") {
+            this.setState({
+                edit_comment_form: {
+                    ...this.state.edit_comment_form,
+                    comment: {
+                        ...this.state.edit_comment_form.comment,
+                        validation_state: "error",
+                    },
+                },
+            });
+        } else {
+            const updated_comment = {
+                id: this.props.comment_details.id,
+                timestamp: parseInt(moment().format("x"), 10),
+                body: comment.value,
+                parentId: this.state.selected_post_id,
+            };
+            this.props.editComment(updated_comment);
+            this.closeEditCommentModal();
+        }
     };
     handleNewComment = e => {
         const { name, comment } = this.state.new_comment_form;
@@ -153,6 +213,14 @@ class PostDetails extends Component {
         }
         e.preventDefault();
     };
+    openEditCommentModal = (id, e) => {
+        this.props.fetchCommentDetails(id);
+        this.props.showCommentsEditModal();
+    };
+    closeEditCommentModal = (id, e) => {
+        this.props.clearCommentDetails();
+        this.props.hideCommentsEditModal();
+    };
     render() {
         const { details, comments } = this.props;
         const { new_comment_form } = this.state;
@@ -190,7 +258,14 @@ class PostDetails extends Component {
                                 Downvote
                             </Button>
                             <div className="pull-right">
-                                <Button bsSize="xsmall">Edit</Button>{" "}
+                                <Button
+                                    onClick={this.openEditCommentModal.bind(
+                                        this,
+                                        comment.id
+                                    )}
+                                    bsSize="xsmall">
+                                    Edit
+                                </Button>{" "}
                                 <Button
                                     bsSize="xsmall"
                                     bsStyle="danger"
@@ -207,10 +282,45 @@ class PostDetails extends Component {
                     {comment.body}
                 </Panel>
             ));
+        const editCommentsModal = (
+            <Modal
+                show={this.props.showModal}
+                onHide={this.closeEditCommentModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit Comment</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <FormGroup
+                        controlId="comment"
+                        validationState={
+                            this.state.edit_comment_form.comment
+                                .validation_state
+                        }>
+                        <FormControl
+                            onChange={this.handleEditFormChange}
+                            value={this.state.edit_comment_form.comment.value}
+                            componentClass="textarea"
+                            placeholder="Comment"
+                        />
+                        {this.state.edit_comment_form.comment
+                            .validation_state ? (
+                            <HelpBlock>Comments may not be blank</HelpBlock>
+                        ) : null}
+                    </FormGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button bsStyle="primary" onClick={this.handleCommentEdit}>
+                        Submit
+                    </Button>
+                    <Button onClick={this.closeEditCommentModal}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        );
         return (
             <Grid>
                 <Row>
                     <Col xs={8}>
+                        {editCommentsModal}
                         <h2>
                             {details.title}{" "}
                             <small className="text-capitalize">
@@ -308,10 +418,16 @@ class PostDetails extends Component {
     }
 }
 
-const mapStateToProps = ({ post_details }) => {
+const mapStateToProps = ({
+    post_details,
+    comment_details,
+    show_comments_edit_modal,
+}) => {
     return {
         details: post_details.details,
         comments: post_details.comments,
+        comment_details,
+        showModal: show_comments_edit_modal,
     };
 };
 
@@ -319,12 +435,17 @@ const mapDispatchToProps = dispatch => {
     return {
         fetchPostDetails: id => dispatch(fetchPostDetails(id)),
         fetchPostComments: id => dispatch(fetchPostComments(id)),
+        fetchCommentDetails: id => dispatch(fetchCommentDetails(id)),
         postComment: comment => dispatch(postComment(comment)),
         deleteComment: comment => dispatch(deleteComment(comment)),
         deletePost: postId => dispatch(deletePost(postId)),
         postVoteForComment: vote => dispatch(postVoteForComment(vote)),
         postVoteForPost: vote => dispatch(postVoteForPost(vote)),
         clearPostDetails: () => dispatch(clearPostDetails()),
+        showCommentsEditModal: () => dispatch(showCommentsEditModal()),
+        hideCommentsEditModal: () => dispatch(hideCommentsEditModal()),
+        clearCommentDetails: () => dispatch(clearCommentDetails()),
+        editComment: (comment) => dispatch(editComment(comment)),
     };
 };
 

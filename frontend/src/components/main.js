@@ -8,6 +8,7 @@ import {
     fetchPostComments,
     postVoteForPost,
     deletePost,
+    setPostsSort,
 } from "../actions";
 import { LinkContainer } from "react-router-bootstrap";
 import { Link } from "react-router-dom";
@@ -24,36 +25,23 @@ import {
 } from "react-bootstrap";
 
 class Main extends Component {
-    state = {
-        sort: "voteScore",
-        selectedCategory:
-            this.props.location.pathname === "/"
-                ? null
-                : this.props.location.pathname.replace("/", ""),
-    };
+    state = {};
     componentDidMount() {
         this.props.fetchCategories();
-        if (!this.state.selectedCategory) {
+        if (!this.props.match.params['category']) {
             this.props.fetchPosts();
         } else {
-            this.props.fetchPostByCategory(this.state.selectedCategory);
+            this.props.fetchPostByCategory(this.props.match.params['category']);
         }
     }
     componentWillReceiveProps(nextProps) {
-        const { location } = nextProps;
-        if (location.pathname !== this.props.location.pathname) {
-            const selectedCategory =
-                location.pathname === "/"
-                    ? null
-                    : location.pathname.replace("/", "");
-            if (selectedCategory) {
-                this.props.fetchPostByCategory(selectedCategory);
+        const { category } = nextProps.match.params;
+        if (category !== this.props.match.params['category']) {
+            if (category) {
+                this.props.fetchPostByCategory(category);
             } else {
                 this.props.fetchPosts();
             }
-            this.setState({
-                selectedCategory,
-            });
         }
     }
     handlePostVote = (id, e) => {
@@ -62,7 +50,7 @@ class Main extends Component {
             option,
             postId: id,
             location: "root",
-            category: this.state.selectedCategory,
+            category: this.props.match.params['category'],
         });
     };
     handlePostDelete = (id, e) => {
@@ -70,14 +58,12 @@ class Main extends Component {
             this.props.deletePost({
                 id,
                 location: "root",
-                category: this.state.selectedCategory,
+                category: this.props.match.params['category'],
             });
         }
     };
     handleSortChange = e => {
-        this.setState({
-            sort: e.target.value,
-        });
+        this.props.setPostsSort(e.target.value);
     };
     sortByVoteScore = (a, b) => {
         return b.voteScore - a.voteScore;
@@ -87,7 +73,7 @@ class Main extends Component {
     };
     render() {
         const { categories, posts } = this.props;
-        const { sort } = this.state;
+        const { sort } = this.props;
         let sortFunction;
         if (sort === "voteScore") {
             sortFunction = this.sortByVoteScore;
@@ -202,6 +188,7 @@ const mapStateToProps = state => {
     return {
         categories: state.categories,
         posts: state.posts,
+        sort: state.sort_posts_by,
     };
 };
 
@@ -215,6 +202,7 @@ const mapDispatchToProps = dispatch => {
         fetchPostComments: id => dispatch(fetchPostComments(id)),
         postVoteForPost: vote => dispatch(postVoteForPost(vote)),
         deletePost: id => dispatch(deletePost(id)),
+        setPostsSort: sort_by => dispatch(setPostsSort(sort_by)),
     };
 };
 

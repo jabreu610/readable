@@ -62,8 +62,10 @@ export function postNewComment(body) {
 }
 
 export function editComment(body) {
-    const commentId = body["commentId"];
-    return fetch(`${baseUrl}/comments/${commentId}`, {
+    const { id } = body;
+    delete body["id"];
+    delete body["parentId"];
+    return fetch(`${baseUrl}/comments/${id}`, {
         headers: { Authorization, "Content-Type": "application/json" },
         method: "PUT",
         body: JSON.stringify(body),

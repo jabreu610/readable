@@ -24,6 +24,8 @@ const initialState = {
         voteScore: 0,
         deleted: false,
     },
+    show_comments_edit_modal: false,
+    sort_posts_by: "voteScore",
 };
 
 function reducer(state = initialState, action) {
@@ -32,6 +34,11 @@ function reducer(state = initialState, action) {
             return {
                 ...state,
                 categories: action.payload.categories,
+            };
+        case actions.SET_POSTS_SORT:
+            return {
+                ...state,
+                sort_posts_by: action.payload,
             };
         case actions.SET_POSTS:
             return {
@@ -62,6 +69,29 @@ function reducer(state = initialState, action) {
                     },
                     comments: [],
                 },
+            };
+        case actions.CLEAR_COMMENT_DETAILS:
+            return {
+                ...state,
+                comment_details: {
+                    id: null,
+                    timestamp: null,
+                    body: "",
+                    author: "",
+                    parentId: "",
+                    voteScore: 0,
+                    deleted: false,
+                },
+            };
+        case actions.SHOW_COMMENTS_EDIT_MODAL:
+            return {
+                ...state,
+                show_comments_edit_modal: true
+            };
+        case actions.HIDE_COMMENTS_EDIT_MODAL:
+            return {
+                ...state,
+                show_comments_edit_modal: false
             };
         case actions.SET_COMMENT_DETAILS:
             return {
