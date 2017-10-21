@@ -19,7 +19,7 @@ import {
 import moment from "moment";
 import uuid from "uuid";
 
-class NewPost extends Component {
+class EditPost extends Component {
     state = {
         post_id: this.props.match.params["id"]
             ? this.props.match.params["id"]
@@ -124,6 +124,7 @@ class NewPost extends Component {
                     body: body.value,
                 };
                 this.props.editPost(post);
+            this.props.history.push(`/post/${this.state.post_id}`);
             } else {
                 const post = {
                     id: uuid.v4(),
@@ -134,8 +135,8 @@ class NewPost extends Component {
                     category: category.value,
                 };
                 this.props.postPost(post);
-            }
             this.props.history.push("/");
+            }
         }
         e.preventDefault();
     };
@@ -251,4 +252,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewPost);
+export default connect(mapStateToProps, mapDispatchToProps)(EditPost);

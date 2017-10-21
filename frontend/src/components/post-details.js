@@ -8,7 +8,9 @@ import {
     deletePost,
     postVoteForComment,
     postVoteForPost,
+    clearPostDetails,
 } from "../actions";
+import { LinkContainer } from "react-router-bootstrap";
 import {
     Grid,
     Row,
@@ -40,6 +42,9 @@ class PostDetails extends Component {
         const { selected_post_id } = this.state;
         this.props.fetchPostDetails(selected_post_id);
         this.props.fetchPostComments(selected_post_id);
+    }
+    componentWillUnmount() {
+        this.props.clearPostDetails();
     }
     handleFormChange = e => {
         const value = e.target.value;
@@ -215,7 +220,9 @@ class PostDetails extends Component {
                     </Col>
                     <Col xs={4}>
                         <div className="post-controls">
-                            <Button>Edit</Button>{" "}
+                            <LinkContainer to={`/post/form/${details.id}`}>
+                                <Button>Edit</Button>
+                            </LinkContainer>{" "}
                             <Button
                                 bsStyle="danger"
                                 onClick={this.handlePostDelete}>
@@ -317,6 +324,7 @@ const mapDispatchToProps = dispatch => {
         deletePost: postId => dispatch(deletePost(postId)),
         postVoteForComment: vote => dispatch(postVoteForComment(vote)),
         postVoteForPost: vote => dispatch(postVoteForPost(vote)),
+        clearPostDetails: () => dispatch(clearPostDetails()),
     };
 };
 

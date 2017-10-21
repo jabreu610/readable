@@ -134,7 +134,7 @@ class Main extends Component {
                         <div className="clearfix" />
                     </div>
                 }>
-                <Link to={`/post/${post.id}`}>
+                <Link to={`/${post.category}/${post.id}`}>
                     <h3>{`${post.title} by ${post.author}`}</h3>
                 </Link>
                 <p>{`Number of comments: ${post.number_of_comments}`}</p>

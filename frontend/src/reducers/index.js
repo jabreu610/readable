@@ -46,6 +46,23 @@ function reducer(state = initialState, action) {
                     details: action.payload,
                 },
             };
+        case actions.CLEAR_POST_DETAILS:
+            return {
+                ...state,
+                post_details: {
+                    details: {
+                        id: null,
+                        timestamp: null,
+                        title: "",
+                        body: "",
+                        author: "",
+                        category: "",
+                        voteScore: 0,
+                        deleted: false,
+                    },
+                    comments: [],
+                },
+            };
         case actions.SET_COMMENT_DETAILS:
             return {
                 ...state,
