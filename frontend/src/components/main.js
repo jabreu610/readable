@@ -10,17 +10,17 @@ import {
     deletePost,
 } from "../actions";
 import { LinkContainer } from "react-router-bootstrap";
-import { Link } from 'react-router-dom'
-import * as utils from '../util/utils';
+import { Link } from "react-router-dom";
+import * as utils from "../util/utils";
 import {
-  Grid,
-  Row,
-  Col,
-  Button,
-  ListGroup,
-  ListGroupItem,
-  FormControl,
-  Panel,
+    Grid,
+    Row,
+    Col,
+    Button,
+    ListGroup,
+    ListGroupItem,
+    FormControl,
+    Panel,
 } from "react-bootstrap";
 import moment from "moment";
 
@@ -62,16 +62,16 @@ class Main extends Component {
         this.props.postVoteForPost({
             option,
             postId: id,
-            location: 'root',
+            location: "root",
             category: this.state.selectedCategory,
         });
     };
     handlePostDelete = (id, e) => {
         if (window.confirm("Are you sure you want to delete this post?")) {
             this.props.deletePost({
-              id,
-              location: 'root',
-              category: this.state.selectedCategory,
+                id,
+                location: "root",
+                category: this.state.selectedCategory,
             });
         }
     };
@@ -96,59 +96,48 @@ class Main extends Component {
         if (sort === "date") {
             sortFunction = this.sortByTimestamp;
         }
-        const postList = posts
-            .sort((a, b) => sortFunction(a, b))
-            .map(post => (
-                <Panel
-                    key={post.id}
-                    footer={
-                        <div>
-                            {`Vote Score: ${post.voteScore} `}
-                            {" - "}
+        const postList = posts.sort((a, b) => sortFunction(a, b)).map(post => (
+            <Panel
+                key={post.id}
+                footer={
+                    <div>
+                        {`Vote Score: ${post.voteScore} `}
+                        {" - "}
+                        <Button
+                            bsSize="xsmall"
+                            value="upVote"
+                            bsStyle="success"
+                            onClick={this.handlePostVote.bind(this, post.id)}>
+                            Upvote
+                        </Button>{" "}
+                        <Button
+                            bsSize="xsmall"
+                            value="downVote"
+                            bsStyle="warning"
+                            onClick={this.handlePostVote.bind(this, post.id)}>
+                            Downvote
+                        </Button>
+                        <div className="pull-right">
+                            <Button bsSize="xsmall">Edit</Button>{" "}
                             <Button
                                 bsSize="xsmall"
-                                value="upVote"
-                                bsStyle="success"
-                                onClick={this.handlePostVote.bind(
+                                bsStyle="danger"
+                                onClick={this.handlePostDelete.bind(
                                     this,
                                     post.id
                                 )}>
-                                Upvote
-                            </Button>{" "}
-                            <Button
-                                bsSize="xsmall"
-                                value="downVote"
-                                bsStyle="warning"
-                                onClick={this.handlePostVote.bind(
-                                    this,
-                                    post.id
-                                )}>
-                                Downvote
+                                Delete
                             </Button>
-                            <div className="pull-right">
-                                <Button bsSize="xsmall">
-                                    Edit
-                                </Button>{" "}
-                                <Button
-                                    bsSize="xsmall"
-                                    bsStyle="danger"
-                                    onClick={this.handlePostDelete.bind(
-                                        this,
-                                        post.id
-                                    )}>
-                                    Delete
-                                </Button>
-                            </div>
-                            <div className="clearfix" />
                         </div>
-                    }>
-                    <Link
-                        to={`/post/${post.id}`}>
-                        <h3>{`${post.title} by ${post.author}`}</h3>
-                    </Link>
-                    <p>{`Number of comments: ${post.number_of_comments}`}</p>
-                </Panel>
-            ));
+                        <div className="clearfix" />
+                    </div>
+                }>
+                <Link to={`/post/${post.id}`}>
+                    <h3>{`${post.title} by ${post.author}`}</h3>
+                </Link>
+                <p>{`Number of comments: ${post.number_of_comments}`}</p>
+            </Panel>
+        ));
         return (
             <Grid>
                 <Row>
@@ -184,11 +173,13 @@ class Main extends Component {
                                 </FormControl>
                             </Col>
                             <Col xs={2}>
-                                <Button
-                                    className="new-post-btn"
-                                    bsStyle="primary">
-                                    New Post
-                                </Button>
+                                <LinkContainer to="/post/new">
+                                    <Button
+                                        className="new-post-btn"
+                                        bsStyle="primary">
+                                        New Post
+                                    </Button>
+                                </LinkContainer>
                             </Col>
                         </Row>
                         <ListGroup>
@@ -206,22 +197,23 @@ class Main extends Component {
 }
 
 const mapStateToProps = state => {
-  return {
-    categories: state.categories,
-    posts: state.posts
-  };
+    return {
+        categories: state.categories,
+        posts: state.posts,
+    };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    fetchCategories: () => dispatch(fetchCategories()),
-    fetchPosts: () => dispatch(fetchPosts()),
-    fetchPostByCategory: category => dispatch(fetchPostByCategory(category)),
-    fetchPostDetails: id => dispatch(fetchPostDetails(id)),
-    fetchPostComments: id => dispatch(fetchPostComments(id)),
-    postVoteForPost: vote => dispatch(postVoteForPost(vote)),
-    deletePost: id => dispatch(deletePost(id)),
-  };
+    return {
+        fetchCategories: () => dispatch(fetchCategories()),
+        fetchPosts: () => dispatch(fetchPosts()),
+        fetchPostByCategory: category =>
+            dispatch(fetchPostByCategory(category)),
+        fetchPostDetails: id => dispatch(fetchPostDetails(id)),
+        fetchPostComments: id => dispatch(fetchPostComments(id)),
+        postVoteForPost: vote => dispatch(postVoteForPost(vote)),
+        deletePost: id => dispatch(deletePost(id)),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

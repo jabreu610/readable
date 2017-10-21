@@ -290,7 +290,9 @@ class PostDetails extends Component {
                                     </HelpBlock>
                                 ) : null}
                             </FormGroup>
-                            <Button type="submit">Post Comment</Button>
+                            <Button bsStyle="primary" type="submit">
+                                Post Comment
+                            </Button>
                         </form>
                     </Col>
                 </Row>
