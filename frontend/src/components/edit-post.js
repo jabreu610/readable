@@ -55,7 +55,7 @@ class EditPost extends Component {
         }
     }
     componentWillReceiveProps(nextProps) {
-        if (this.state.post_id === nextProps.id) {
+        if (this.state.post_id && this.state.post_id === nextProps.id) {
             this.setState({
                 ...this.state,
                 edit_mode: true,

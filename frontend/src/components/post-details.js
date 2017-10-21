@@ -56,6 +56,9 @@ class PostDetails extends Component {
         this.props.fetchPostComments(selected_post_id);
     }
     componentWillReceiveProps(nextProps) {
+        if (Object.keys(nextProps.details).length === 0) {
+            this.props.history.push("/404");
+        }
         if (nextProps.comment_details.id) {
             this.setState({
                 edit_comment_form: {
@@ -345,7 +348,7 @@ class PostDetails extends Component {
                     <Col xs={12}>
                         <h4>{`by ${details.author} - ${moment(
                             details.timestamp
-                        ).format("MMM DD, YYYY hh:mma")}`}</h4>
+                        ).format("MMM DD, YYYY hh:mma")} - number of comments: ${comments.length}`}</h4>
                         <div className="vote-controls">
                             {`Vote Score: ${details.voteScore} `}
                             {" - "}
