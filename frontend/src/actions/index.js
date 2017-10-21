@@ -8,6 +8,7 @@ export const FETCH_POST_DETAILS = '[Post Details] Fetch post details from server
 export const SET_POST_DETAILS = '[Post Details] Set post details from server';
 export const FETCH_POST_COMMENTS = '[Post Details] Fetch post comments from server';
 export const SET_POST_COMMENTS = '[Post Details] Set post comments from server';
+export const POST_NEW_COMMENT = '[Post Details] Post comment to server';
 
 export const setCategories = categories => ({
     type: SET_CATEGORIES,
@@ -52,4 +53,12 @@ export const setPostComments = comments => ({
 export const fetchPostComments = id => dispatch => {
     dispatch({ type: FETCH_POST_COMMENTS });
     Api.fetchCommentsForPost(id).then(comments => dispatch(setPostComments(comments)));
+}
+
+export const postComment = comment => dispatch => {
+    dispatch({ type: POST_NEW_COMMENT });
+    const post_id = comment.parentId;
+    Api.postNewComment(comment).then(() =>
+      dispatch(fetchPostComments(post_id))
+    );
 }

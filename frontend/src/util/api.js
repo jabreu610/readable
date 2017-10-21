@@ -26,3 +26,15 @@ export function fetchCommentsForPost(id) {
         .then(res => res.json());
 }
 
+export function postNewComment(body) {
+    console.log(body);
+    return fetch(
+        `${baseUrl}/comments`,
+        { 
+            headers: { Authorization, 'Content-Type': "application/json" }, 
+            method: "POST", 
+            body: JSON.stringify(body) 
+        })
+        .then(res => res.json());
+}
+

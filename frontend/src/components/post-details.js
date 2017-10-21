@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import {
   fetchPostDetails,
   fetchPostComments,
+  postComment,
 } from "../actions";
 import {
   Grid,
@@ -35,7 +36,6 @@ class PostDetails extends Component {
         const { selected_post_id } = this.state;
         this.props.fetchPostDetails(selected_post_id);
         this.props.fetchPostComments(selected_post_id);
-        console.log(parseInt(moment().format('x')))
     }
     handleFormChange = (e) => {
         const value = e.target.value;
@@ -50,6 +50,20 @@ class PostDetails extends Component {
                 }
             }
         })
+    }
+    clearForm = () => {
+        this.setState({
+            new_comment_form: {
+                name: {
+                    value: '',
+                    validation_state: null,
+                },
+                comment: {
+                    value: '',
+                    validation_state: null,
+                },
+            }
+        });
     }
     handleNewComment = (e) => {
         const {name, comment} = this.state.new_comment_form;
@@ -91,12 +105,13 @@ class PostDetails extends Component {
         } else {
             const new_comment = {
                 id: uuid.v4(),
-                timestamp: parseInt(moment().format('x')),
+                timestamp: parseInt(moment().format('x'), 10),
                 body: comment.value,
                 author: name.value,
                 parentId: this.state.selected_post_id,
             }
-            // console.log(new_comment)
+            this.props.postComment(new_comment);
+            this.clearForm();
         }
         e.preventDefault();
     } 
@@ -181,7 +196,8 @@ const mapStateToProps = ({ post_details }) => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchPostDetails: id => dispatch(fetchPostDetails(id)),
-    fetchPostComments: id => dispatch(fetchPostComments(id))
+    fetchPostComments: id => dispatch(fetchPostComments(id)),
+    postComment: comment => dispatch(postComment(comment)),
   };
 };
 
