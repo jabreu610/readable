@@ -91,7 +91,7 @@ export const deletePost = post => dispatch => {
 export const editPost = comment => dispatch => {
     dispatch({ type: EDIT_POST });
     Api.editPost(comment).then(() =>
-      dispatch(fetchPost())
+      dispatch(fetchPosts())
     );
 }
 
