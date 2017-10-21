@@ -106,7 +106,7 @@ export const postComment = comment => dispatch => {
 export const deleteComment = comment => dispatch => {
     dispatch({ type: DELETE_COMMENT });
     const post_id = comment.parentId;
-    Api.deleteComment(comment.id).then(() =>
+    Api.deleteComment(comment.commentId).then(() =>
       dispatch(fetchPostComments(post_id))
     );
 }
