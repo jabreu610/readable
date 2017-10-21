@@ -81,9 +81,9 @@ export const postPost = post => dispatch => {
     );
 }
 
-export const deletePost = post => dispatch => {
+export const deletePost = id => dispatch => {
     dispatch({ type: DELETE_POST });
-    Api.deletePost(post.id).then(() =>
+    Api.deletePost(id).then(() =>
       dispatch(fetchPosts())
     );
 }

@@ -5,6 +5,7 @@ import {
   fetchPostComments,
   postComment,
   deleteComment,
+  deletePost,
   postVoteForComment,
   postVoteForPost,
 } from "../actions";
@@ -64,10 +65,12 @@ class PostDetails extends Component {
         });
     };
     handleCommentDelete = (commentId, e) => {
-        this.props.deleteComment({
-            parentId: this.state.selected_post_id,
-            commentId,
-        });
+        if (window.confirm('Are you sure you want to delete this comment?')) {
+            this.props.deleteComment({
+                parentId: this.state.selected_post_id,
+                commentId,
+            });
+        }
     };
     handlePostVote = e => {
         const option = e.target.value;
@@ -75,6 +78,12 @@ class PostDetails extends Component {
             option,
             postId: this.state.selected_post_id,
         });
+    };
+    handlePostDelete = e => {
+        if (window.confirm('Are you sure you want to delete this post?')) {
+            this.props.deletePost(this.state.selected_post_id);
+            this.props.history.push('/');
+        }
     };
     clearForm = () => {
         this.setState({
@@ -208,7 +217,7 @@ class PostDetails extends Component {
                     <Col xs={4}>
                         <div className="post-controls">
                             <Button>Edit</Button>{" "}
-                            <Button bsStyle="danger">Delete</Button>
+                            <Button bsStyle="danger" onClick={this.handlePostDelete}>Delete</Button>
                         </div>
                     </Col>
                 </Row>
@@ -300,6 +309,7 @@ const mapDispatchToProps = dispatch => {
     fetchPostComments: id => dispatch(fetchPostComments(id)),
     postComment: comment => dispatch(postComment(comment)),
     deleteComment: comment => dispatch(deleteComment(comment)),
+    deletePost: postId => dispatch(deletePost(postId)),
     postVoteForComment: vote => dispatch(postVoteForComment(vote)),
     postVoteForPost: vote => dispatch(postVoteForPost(vote)),
   };
